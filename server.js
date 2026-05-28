@@ -56,12 +56,33 @@ app.post('/save', (req, res) => {
   res.json({ id });
 });
 app.get('/assign', (req, res) => {
+  const order = req.query.order || 'no_order';
+  const phone = req.query.phone || 'no_phone';
+  const email = req.query.email || 'no_email';
+
   const items = Object.values(storage);
 
   if (items.length === 0) {
-    console.log('ASSIGN: no utm found');
+    console.log('ASSIGN: no utm found', {
+      order,
+      phone,
+      email
+    });
+
     return res.type('text/plain').send('unknown');
   }
+
+  const last = items[items.length - 1];
+
+  console.log('ASSIGN UTM:', {
+    utm_source: last.utm_source,
+    order,
+    phone,
+    email
+  });
+
+  res.type('text/plain').send(last.utm_source);
+});
 
   const last = items[items.length - 1];
 
