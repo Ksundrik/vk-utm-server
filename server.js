@@ -13,7 +13,18 @@ app.get('/', (req, res) => {
 });
 
 const storage = {};
+app.get('/testsave', (req, res) => {
+  const id = Date.now().toString();
 
+  storage[id] = {
+    utm_source: 'testvk',
+    createdAt: Date.now()
+  };
+
+  console.log('TEST SAVED:', storage[id]);
+
+  res.json({ id: id, saved: storage[id] });
+});
 app.post('/save', (req, res) => {
   const { utm_source } = req.body;
 
