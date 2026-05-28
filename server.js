@@ -65,9 +65,11 @@ app.get('/assign', (req, res) => {
   const phone = req.query.phone || 'no_phone';
   const email = req.query.email || 'no_email';
 
-  const items = Object.values(storage);
+  const entries = Object.entries(storage).sort((a, b) => {
+    return a[1].createdAt - b[1].createdAt;
+  });
 
-  if (items.length === 0) {
+  if (entries.length === 0) {
     console.log('ASSIGN: no utm found', {
       order,
       phone,
@@ -77,16 +79,19 @@ app.get('/assign', (req, res) => {
     return res.type('text/plain').send('unknown');
   }
 
-  const last = items[items.length - 1];
+  const [id, item] = entries[0];
 
-  console.log('ASSIGN UTM:', {
-    utm_source: last.utm_source,
+  delete storage[id];
+
+  console.log('ASSIGN FIFO UTM:', {
+    utm_source: item.utm_source,
     order,
     phone,
-    email
+    email,
+    used_click_id: id
   });
 
-  res.type('text/plain').send(last.utm_source);
+  res.type('text/plain').send(item.utm_source);
 });
 
 const PORT = process.env.PORT || 3000;
