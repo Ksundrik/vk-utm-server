@@ -93,7 +93,18 @@ app.get('/assign', (req, res) => {
 
   res.type('text/plain').send(item.utm_source);
 });
+app.get('/native-test', (req, res) => {
+  const utm = req.query.utm || 'no_utm';
+  const order = req.query.order || 'no_order';
 
+  console.log('NATIVE TEST:', {
+    utm,
+    order,
+    rawUrl: req.url
+  });
+
+  res.type('text/plain').send('ok');
+});
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
