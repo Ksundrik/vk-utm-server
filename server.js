@@ -6,37 +6,15 @@ const app = express();
 app.use(cors({
   origin: '*'
 }));
+
 app.use(express.json());
+
+const storage = {};
 
 app.get('/', (req, res) => {
   res.send('Server works');
 });
 
-const storage = {};
-app.get('/save-testvk', (req, res) => {
-  const id = Date.now().toString();
-
-  storage[id] = {
-    utm_source: 'testvk',
-    createdAt: Date.now()
-  };
-
-  console.log('SAVE TESTVK:', storage[id]);
-
-  res.json({ id: id, saved: storage[id] });
-});
-app.get('/testsave', (req, res) => {
-  const id = Date.now().toString();
-
-  storage[id] = {
-    utm_source: 'testvk',
-    createdAt: Date.now()
-  };
-
-  console.log('TEST SAVED:', storage[id]);
-
-  res.json({ id: id, saved: storage[id] });
-});
 app.post('/save', (req, res) => {
   const { utm_source } = req.body;
 
@@ -55,6 +33,33 @@ app.post('/save', (req, res) => {
 
   res.json({ id });
 });
+
+app.get('/testsave', (req, res) => {
+  const id = Date.now().toString();
+
+  storage[id] = {
+    utm_source: 'testvk',
+    createdAt: Date.now()
+  };
+
+  console.log('TEST SAVED:', storage[id]);
+
+  res.json({ id: id, saved: storage[id] });
+});
+
+app.get('/save-testvk', (req, res) => {
+  const id = Date.now().toString();
+
+  storage[id] = {
+    utm_source: 'testvk',
+    createdAt: Date.now()
+  };
+
+  console.log('SAVE TESTVK:', storage[id]);
+
+  res.json({ id: id, saved: storage[id] });
+});
+
 app.get('/assign', (req, res) => {
   const order = req.query.order || 'no_order';
   const phone = req.query.phone || 'no_phone';
@@ -84,12 +89,8 @@ app.get('/assign', (req, res) => {
   res.type('text/plain').send(last.utm_source);
 });
 
-  const last = items[items.length - 1];
+const PORT = process.env.PORT || 3000;
 
-  console.log('ASSIGN UTM:', last.utm_source);
-
-  res.type('text/plain').send(last.utm_source);
-});
-app.listen(3000, () => {
-  console.log('Server started');
+app.listen(PORT, () => {
+  console.log(`Server started on port ${PORT}`);
 });
