@@ -55,7 +55,20 @@ app.post('/save', (req, res) => {
 
   res.json({ id });
 });
+app.get('/assign', (req, res) => {
+  const items = Object.values(storage);
 
+  if (items.length === 0) {
+    console.log('ASSIGN: no utm found');
+    return res.type('text/plain').send('unknown');
+  }
+
+  const last = items[items.length - 1];
+
+  console.log('ASSIGN UTM:', last.utm_source);
+
+  res.type('text/plain').send(last.utm_source);
+});
 app.listen(3000, () => {
   console.log('Server started');
 });
