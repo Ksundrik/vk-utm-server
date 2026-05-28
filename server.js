@@ -10,12 +10,33 @@ app.use(cors({
 app.use(express.json());
 
 const storage = {};
+const UTM_TTL_MS = 15 * 60 * 1000; // 15 минут
 
 app.get('/', (req, res) => {
   res.send('Server works');
 });
 
+function cleanupOldUTM() {
+  const now = Date.now();
+
+  Object.keys(storage).forEach((id) => {
+    const item = storage[id];
+
+    if (now - item.createdAt > UTM_TTL_MS) {
+      console.log('DELETE OLD UTM:', {
+        id,
+        utm_source: item.utm_source,
+        age_ms: now - item.createdAt
+      });
+
+      delete storage[id];
+    }
+  });
+}
+
 app.post('/save', (req, res) => {
+  cleanupOldUTM();
+
   const { utm_source } = req.body;
 
   if (!utm_source) {
@@ -29,38 +50,17 @@ app.post('/save', (req, res) => {
     createdAt: Date.now()
   };
 
-  console.log('Saved:', storage[id]);
+  console.log('SAVED UTM:', {
+    id,
+    utm_source
+  });
 
   res.json({ id });
 });
 
-app.get('/testsave', (req, res) => {
-  const id = Date.now().toString();
-
-  storage[id] = {
-    utm_source: 'testvk',
-    createdAt: Date.now()
-  };
-
-  console.log('TEST SAVED:', storage[id]);
-
-  res.json({ id: id, saved: storage[id] });
-});
-
-app.get('/save-testvk', (req, res) => {
-  const id = Date.now().toString();
-
-  storage[id] = {
-    utm_source: 'testvk',
-    createdAt: Date.now()
-  };
-
-  console.log('SAVE TESTVK:', storage[id]);
-
-  res.json({ id: id, saved: storage[id] });
-});
-
 app.get('/assign', (req, res) => {
+  cleanupOldUTM();
+
   const order = req.query.order || 'no_order';
   const phone = req.query.phone || 'no_phone';
   const email = req.query.email || 'no_email';
