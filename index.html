@@ -1,1 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script>
+    (async function() {
 
+      const params = new URLSearchParams(window.location.search);
+
+      const utm = params.get('utm_source') || 'unknown';
+
+      // отправляем utm на сервер
+      await fetch('https://vk-utm-server.onrender.com/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          utm_source: utm
+        })
+      });
+
+      // редиректим в VK
+      window.location.href = "https://vk.com/app6622219_-192854863#themeId=34919";
+
+    })();
+  </script>
+</head>
+<body></body>
+</html>
