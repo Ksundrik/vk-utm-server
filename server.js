@@ -13,6 +13,18 @@ app.get('/', (req, res) => {
 });
 
 const storage = {};
+app.get('/save-testvk', (req, res) => {
+  const id = Date.now().toString();
+
+  storage[id] = {
+    utm_source: 'testvk',
+    createdAt: Date.now()
+  };
+
+  console.log('SAVE TESTVK:', storage[id]);
+
+  res.json({ id: id, saved: storage[id] });
+});
 app.get('/testsave', (req, res) => {
   const id = Date.now().toString();
 
